@@ -37,7 +37,7 @@ const Signup = () => {
             </div>
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center mb-6">
-                    <img src={logo} alt="AiR Logo" className="h-12" />
+                    <img src={logo} alt="AiR Logo" className="h-12 dark:invert" />
                 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
                     Create your account
