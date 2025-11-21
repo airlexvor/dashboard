@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     TrendingUp,
     Users,
@@ -14,6 +15,8 @@ import StatCard from '../components/StatCard';
 import SectionHeader from '../components/SectionHeader';
 
 const Dashboard = () => {
+    const navigate = useNavigate();
+
     // Pie chart data
     const pieChartData = [
         { label: 'Electronics', value: 42500, color: '#3b82f6' },
@@ -52,7 +55,10 @@ const Dashboard = () => {
                 title="Dashboard"
                 description="A high-level overview of everything the business cares about."
                 action={
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                    <button
+                        onClick={() => navigate('/ai-assistant')}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                    >
                         <Sparkles className="w-4 h-4 mr-2" />
                         Ask AiR
                     </button>
@@ -231,8 +237,8 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {/* Active Campaigns */}
+            {/* Active Campaigns - Full Width */}
+            <div className="mb-8">
                 <Card title="Active Campaigns Overview"
                     action={<button className="text-sm text-blue-600 hover:text-blue-700 font-medium">View All</button>}
                 >
@@ -258,7 +264,10 @@ const Dashboard = () => {
                         ))}
                     </div>
                 </Card>
+            </div>
 
+            {/* Sales by Category and Catalog Health Status - Side by Side */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {/* Sales by Category Pie Chart */}
                 <Card title="Sales by Category">
                     <div className="flex items-center justify-between">
@@ -312,51 +321,52 @@ const Dashboard = () => {
                     </div>
                 </Card>
 
-                {/* Catalog Health & AI Flags */}
-                <div className="space-y-6">
-                    <Card title="Catalog Health Status">
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center">
-                                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-4">
-                                    <CheckCircle className="w-6 h-6 text-green-600" />
-                                </div>
-                                <div>
-                                    <h4 className="text-lg font-bold text-gray-900 dark:text-white">98% Healthy</h4>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">452 products synced</p>
-                                </div>
+                {/* Catalog Health Status */}
+                <Card title="Catalog Health Status">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center">
+                            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-4">
+                                <CheckCircle className="w-6 h-6 text-green-600" />
                             </div>
-                            <button className="text-sm text-blue-600 font-medium">Optimize</button>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600 dark:text-gray-400">Missing Descriptions</span>
-                                <span className="font-medium text-gray-900 dark:text-white">4</span>
-                            </div>
-                            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
-                                <div className="bg-orange-400 h-1.5 rounded-full" style={{ width: '5%' }}></div>
-                            </div>
-
-                            <div className="flex justify-between text-sm mt-3">
-                                <span className="text-gray-600 dark:text-gray-400">Low Quality Images</span>
-                                <span className="font-medium text-gray-900 dark:text-white">12</span>
-                            </div>
-                            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
-                                <div className="bg-yellow-400 h-1.5 rounded-full" style={{ width: '15%' }}></div>
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card className="bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30">
-                        <div className="flex items-start">
-                            <AlertTriangle className="w-5 h-5 text-red-600 mr-3 mt-0.5" />
                             <div>
-                                <h3 className="font-semibold text-red-900 dark:text-red-200">Action Required</h3>
-                                <p className="text-sm text-red-700 dark:text-red-300 mt-1">2 payment gateways need re-authentication. This may affect checkout.</p>
-                                <button className="mt-3 text-sm font-medium text-red-700 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200 underline">Fix Issue</button>
+                                <h4 className="text-lg font-bold text-gray-900 dark:text-white">98% Healthy</h4>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">452 products synced</p>
                             </div>
                         </div>
-                    </Card>
-                </div>
+                        <button className="text-sm text-blue-600 font-medium">Optimize</button>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                            <span className="text-gray-600 dark:text-gray-400">Missing Descriptions</span>
+                            <span className="font-medium text-gray-900 dark:text-white">4</span>
+                        </div>
+                        <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
+                            <div className="bg-orange-400 h-1.5 rounded-full" style={{ width: '5%' }}></div>
+                        </div>
+
+                        <div className="flex justify-between text-sm mt-3">
+                            <span className="text-gray-600 dark:text-gray-400">Low Quality Images</span>
+                            <span className="font-medium text-gray-900 dark:text-white">12</span>
+                        </div>
+                        <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
+                            <div className="bg-yellow-400 h-1.5 rounded-full" style={{ width: '15%' }}></div>
+                        </div>
+                    </div>
+                </Card>
+            </div>
+
+            {/* Action Required Alert */}
+            <div className="mb-8">
+                <Card className="bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/30">
+                    <div className="flex items-start">
+                        <AlertTriangle className="w-5 h-5 text-red-600 mr-3 mt-0.5" />
+                        <div>
+                            <h3 className="font-semibold text-red-900 dark:text-red-200">Action Required</h3>
+                            <p className="text-sm text-red-700 dark:text-red-300 mt-1">2 payment gateways need re-authentication. This may affect checkout.</p>
+                            <button className="mt-3 text-sm font-medium text-red-700 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200 underline">Fix Issue</button>
+                        </div>
+                    </div>
+                </Card>
             </div>
         </div>
     );
