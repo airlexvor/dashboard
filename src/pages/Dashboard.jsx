@@ -14,6 +14,38 @@ import StatCard from '../components/StatCard';
 import SectionHeader from '../components/SectionHeader';
 
 const Dashboard = () => {
+    // Pie chart data
+    const pieChartData = [
+        { label: 'Electronics', value: 42500, color: '#3b82f6' },
+        { label: 'Clothing', value: 35800, color: '#8b5cf6' },
+        { label: 'Home & Garden', value: 28200, color: '#10b981' },
+        { label: 'Sports', value: 18092, color: '#f59e0b' }
+    ];
+
+    const total = pieChartData.reduce((sum, item) => sum + item.value, 0);
+    let currentAngle = -90;
+
+    const createPieSlice = (percentage, startAngle, color) => {
+        const angle = (percentage / 100) * 360;
+        const endAngle = startAngle + angle;
+
+        const x1 = 50 + 45 * Math.cos(Math.PI * startAngle / 180);
+        const y1 = 50 + 45 * Math.sin(Math.PI * startAngle / 180);
+        const x2 = 50 + 45 * Math.cos(Math.PI * endAngle / 180);
+        const y2 = 50 + 45 * Math.sin(Math.PI * endAngle / 180);
+
+        const largeArc = angle > 180 ? 1 : 0;
+
+        const pathData = [
+            `M 50 50`,
+            `L ${x1} ${y1}`,
+            `A 45 45 0 ${largeArc} 1 ${x2} ${y2}`,
+            'Z'
+        ].join(' ');
+
+        return pathData;
+    };
+
     return (
         <div className="max-w-7xl mx-auto">
             <SectionHeader
@@ -27,58 +59,7 @@ const Dashboard = () => {
                 }
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                {/* AI Insights Summary - Takes up 2 columns on large screens */}
-                <div className="lg:col-span-2">
-                    <Card className="h-full border-blue-100 dark:border-gray-700 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-900">
-                        <div className="flex items-center mb-4">
-                            <div className="p-2 bg-blue-100 rounded-lg mr-3">
-                                <Sparkles className="w-5 h-5 text-blue-600" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">AI Insights Summary</h3>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="p-3 bg-white dark:bg-gray-700 rounded-lg border border-blue-100 dark:border-gray-600 shadow-sm">
-                                <p className="text-gray-700 dark:text-gray-300 text-sm"><span className="font-semibold text-blue-600 dark:text-blue-400">Traffic Spike:</span> Organic traffic is up 24% this week, primarily driven by the "Summer Collection" blog post.</p>
-                            </div>
-                            <div className="p-3 bg-white dark:bg-gray-700 rounded-lg border border-blue-100 dark:border-gray-600 shadow-sm">
-                                <p className="text-gray-700 dark:text-gray-300 text-sm"><span className="font-semibold text-blue-600 dark:text-blue-400">Inventory Alert:</span> 3 top-selling items are predicted to go out of stock within 5 days based on current sales velocity.</p>
-                            </div>
-                            <div className="p-3 bg-white dark:bg-gray-700 rounded-lg border border-blue-100 dark:border-gray-600 shadow-sm">
-                                <p className="text-gray-700 dark:text-gray-300 text-sm"><span className="font-semibold text-blue-600 dark:text-blue-400">Customer Sentiment:</span> Positive sentiment has increased by 12% following the new automated support responses.</p>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-
-                {/* Top Opportunities */}
-                <div className="lg:col-span-1">
-                    <Card title="Top Opportunities" className="h-full">
-                        <div className="space-y-4">
-                            {[
-                                { title: "Recover 12 abandoned carts", value: "$1,240 potential", icon: ShoppingCart, color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-900/20" },
-                                { title: "Re-engage dormant users", value: "450 users", icon: Users, color: "text-purple-600", bg: "bg-purple-50 dark:bg-purple-900/20" },
-                                { title: "Optimize 5 underperforming ads", value: "Save $300/mo", icon: TrendingUp, color: "text-green-600", bg: "bg-green-50 dark:bg-green-900/20" },
-                            ].map((item, index) => (
-                                <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg transition-colors cursor-pointer group">
-                                    <div className="flex items-center">
-                                        <div className={`p-2 rounded-lg ${item.bg} mr-3`}>
-                                            <item.icon className={`w-4 h-4 ${item.color}`} />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-900 dark:text-white">{item.title}</p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">{item.value}</p>
-                                        </div>
-                                    </div>
-                                    <ArrowRight className="w-4 h-4 text-gray-300 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-300" />
-                                </div>
-                            ))}
-                        </div>
-                    </Card>
-                </div>
-            </div>
-
-            {/* Snapshots Grid */}
+            {/* Key Metrics Grid - Moved to Top */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <StatCard
                     title="Total Sales"
@@ -110,6 +91,146 @@ const Dashboard = () => {
                 />
             </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                {/* AI Insights Summary - Takes up 2 columns on large screens */}
+                <div className="lg:col-span-2">
+                    <Card className="h-full border-blue-100 dark:border-gray-700 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-900">
+                        <div className="flex items-center justify-between mb-5">
+                            <div className="flex items-center">
+                                <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl mr-3 shadow-lg shadow-blue-500/30">
+                                    <Sparkles className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">AI Insights Summary</h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Real-time intelligence</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse"></span>
+                                    Live
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Scrollable container */}
+                        <div className="space-y-3 max-h-[320px] overflow-y-auto overflow-x-visible pr-2 custom-scrollbar">
+                            {[
+                                {
+                                    type: "Traffic Spike",
+                                    icon: TrendingUp,
+                                    iconColor: "text-emerald-600",
+                                    iconBg: "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20",
+                                    borderColor: "border-emerald-200 dark:border-emerald-800/40",
+                                    accentColor: "bg-gradient-to-r from-emerald-500 to-teal-500",
+                                    message: "Organic traffic is up 24% this week, primarily driven by the \"Summer Collection\" blog post.",
+                                    time: "2m ago",
+                                    priority: "high"
+                                },
+                                {
+                                    type: "Inventory Alert",
+                                    icon: AlertTriangle,
+                                    iconColor: "text-orange-600",
+                                    iconBg: "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20",
+                                    borderColor: "border-orange-200 dark:border-orange-800/40",
+                                    accentColor: "bg-gradient-to-r from-orange-500 to-red-500",
+                                    message: "3 top-selling items are predicted to go out of stock within 5 days based on current sales velocity.",
+                                    time: "15m ago",
+                                    priority: "urgent"
+                                },
+                                {
+                                    type: "Customer Sentiment",
+                                    icon: Users,
+                                    iconColor: "text-blue-600",
+                                    iconBg: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20",
+                                    borderColor: "border-blue-200 dark:border-blue-800/40",
+                                    accentColor: "bg-gradient-to-r from-blue-500 to-indigo-500",
+                                    message: "Positive sentiment has increased by 12% following the new automated support responses.",
+                                    time: "1h ago",
+                                    priority: "medium"
+                                },
+                                {
+                                    type: "Conversion Opportunity",
+                                    icon: Activity,
+                                    iconColor: "text-purple-600",
+                                    iconBg: "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20",
+                                    borderColor: "border-purple-200 dark:border-purple-800/40",
+                                    accentColor: "bg-gradient-to-r from-purple-500 to-pink-500",
+                                    message: "Peak conversion hours detected: 2PM-5PM EST. Consider scheduling priority campaigns during this window.",
+                                    time: "2h ago",
+                                    priority: "medium"
+                                },
+                                {
+                                    type: "Cost Optimization",
+                                    icon: ShoppingCart,
+                                    iconColor: "text-cyan-600",
+                                    iconBg: "bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20",
+                                    borderColor: "border-cyan-200 dark:border-cyan-800/40",
+                                    accentColor: "bg-gradient-to-r from-cyan-500 to-blue-500",
+                                    message: "Ad spend efficiency improved by 18% after pausing 3 underperforming campaigns. Reallocate budget to top performers.",
+                                    time: "3h ago",
+                                    priority: "high"
+                                }
+                            ].map((insight, index) => (
+                                <div
+                                    key={index}
+                                    className={`group relative p-4 bg-white dark:bg-gray-700/50 rounded-xl border ${insight.borderColor} hover:shadow-xl hover:scale-[1.01] transition-all duration-300 cursor-pointer backdrop-blur-sm`}
+                                >
+                                    {/* Accent bar */}
+                                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${insight.accentColor} rounded-l-xl`}></div>
+
+                                    <div className="flex items-start ml-2">
+                                        <div className={`flex-shrink-0 p-2.5 ${insight.iconBg} rounded-lg mr-3 group-hover:scale-110 transition-transform duration-300`}>
+                                            <insight.icon className={`w-4 h-4 ${insight.iconColor}`} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between mb-1.5">
+                                                <h4 className="text-sm font-bold text-gray-900 dark:text-white">{insight.type}</h4>
+                                                <div className="flex items-center space-x-2">
+                                                    {insight.priority === "urgent" && (
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
+                                                            Urgent
+                                                        </span>
+                                                    )}
+                                                    <span className="text-xs text-gray-400 dark:text-gray-500">{insight.time}</span>
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{insight.message}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </Card>
+                </div>
+
+                {/* Top Opportunities */}
+                <div className="lg:col-span-1">
+                    <Card title="Top Opportunities" className="h-full">
+                        <div className="space-y-4">
+                            {[
+                                { title: "Recover 12 abandoned carts", value: "$1,240 potential", icon: ShoppingCart, color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-900/20" },
+                                { title: "Re-engage dormant users", value: "450 users", icon: Users, color: "text-purple-600", bg: "bg-purple-50 dark:bg-purple-900/20" },
+                                { title: "Optimize 5 underperforming ads", value: "Save $300/mo", icon: TrendingUp, color: "text-green-600", bg: "bg-green-50 dark:bg-green-900/20" },
+                            ].map((item, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg transition-colors cursor-pointer group">
+                                    <div className="flex items-center">
+                                        <div className={`p-2 rounded-lg ${item.bg} mr-3`}>
+                                            <item.icon className={`w-4 h-4 ${item.color}`} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-900 dark:text-white">{item.title}</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">{item.value}</p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight className="w-4 h-4 text-gray-300 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-300" />
+                                </div>
+                            ))}
+                        </div>
+                    </Card>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {/* Active Campaigns */}
                 <Card title="Active Campaigns Overview"
@@ -135,6 +256,59 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </Card>
+
+                {/* Sales by Category Pie Chart */}
+                <Card title="Sales by Category">
+                    <div className="flex items-center justify-between">
+                        {/* Pie Chart */}
+                        <div className="flex-shrink-0">
+                            <svg viewBox="0 0 100 100" className="w-40 h-40 transform -rotate-90">
+                                {pieChartData.map((item, index) => {
+                                    const percentage = (item.value / total) * 100;
+                                    const slice = createPieSlice(percentage, currentAngle, item.color);
+                                    const previousAngle = currentAngle;
+                                    currentAngle += (percentage / 100) * 360;
+
+                                    return (
+                                        <path
+                                            key={index}
+                                            d={slice}
+                                            fill={item.color}
+                                            className="transition-all duration-300 hover:opacity-80 cursor-pointer"
+                                            style={{
+                                                animation: `fadeIn 0.6s ease-out ${index * 0.1}s both`
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </svg>
+                        </div>
+
+                        {/* Legend */}
+                        <div className="flex-1 ml-6 space-y-3">
+                            {pieChartData.map((item, index) => {
+                                const percentage = ((item.value / total) * 100).toFixed(1);
+                                return (
+                                    <div key={index} className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <div
+                                                className="w-3 h-3 rounded-sm mr-2"
+                                                style={{ backgroundColor: item.color }}
+                                            ></div>
+                                            <span className="text-sm text-gray-700 dark:text-gray-300">{item.label}</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                                                ${(item.value / 1000).toFixed(1)}k
+                                            </p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">{percentage}%</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </Card>
 
