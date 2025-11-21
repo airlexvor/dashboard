@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { db } from '../lib/db';
+import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext(null);
 
@@ -10,30 +10,47 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         // Check active session on mount
         const checkSession = async () => {
-            const { user } = await db.auth.getSession();
-            setUser(user);
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user ?? null);
             setLoading(false);
         };
         checkSession();
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+            setLoading(false);
+        });
+
+        return () => subscription.unsubscribe();
     }, []);
 
     const login = async (email, password) => {
-        const { user, error } = await db.auth.signIn(email, password);
-        if (error) throw new Error(error);
-        setUser(user);
-        return user;
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        if (error) throw error;
+        return data.user;
     };
 
     const signup = async (name, email, password) => {
-        const { user, error } = await db.auth.signUp(name, email, password);
-        if (error) throw new Error(error);
-        setUser(user);
-        return user;
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: name,
+                },
+            },
+        });
+        if (error) throw error;
+        return data.user;
     };
 
     const logout = async () => {
-        await db.auth.signOut();
-        setUser(null);
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
     };
 
     return (

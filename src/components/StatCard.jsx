@@ -14,28 +14,26 @@ const StatCard = ({ title, value, trend, trendLabel, icon: Icon, color = "blue" 
     };
 
     return (
-        <Card className="h-full">
-            <div className="flex items-start justify-between mb-4">
-                <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
-                    <h4 className="text-2xl font-bold text-gray-900">{value}</h4>
-                </div>
-                {Icon && (
+        <Card>
+            <div className="p-6">
+                <div className="flex justify-between items-start">
+                    <div>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</p>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-2">{value}</h3>
+                    </div>
                     <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
                         <Icon className="w-5 h-5" />
                     </div>
-                )}
-            </div>
-
-            {(trend !== undefined) && (
-                <div className="flex items-center text-sm">
-                    <span className={`flex items-center font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                        {isPositive ? <ArrowUpRight className="w-4 h-4 mr-1" /> : <ArrowDownRight className="w-4 h-4 mr-1" />}
-                        {Math.abs(trend)}%
-                    </span>
-                    <span className="text-gray-400 ml-2">{trendLabel || 'vs last month'}</span>
                 </div>
-            )}
+                <div className="mt-4 flex items-center">
+                    <span className={`flex items-center text-sm font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                        }`}>
+                        {isPositive ? <ArrowUpRight className="w-4 h-4 mr-1" /> : <ArrowDownRight className="w-4 h-4 mr-1" />}
+                        {trend}
+                    </span>
+                    <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">vs last month</span>
+                </div>
+            </div>
         </Card>
     );
 };

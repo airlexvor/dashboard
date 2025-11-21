@@ -38,9 +38,11 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div className="h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-colors duration-200">
       <div className="p-6 flex justify-center">
-        <img src={logo} alt="AiR Logo" className="h-8" />
+        <img src={logo} alt="AiR Logo" className="h-8 block dark:hidden" />
+        {/* You might want a white version of the logo for dark mode, or filter it */}
+        <img src={logo} alt="AiR Logo" className="h-8 hidden dark:block filter invert" />
       </div>
       <nav className="flex-1 overflow-y-auto px-4 space-y-1">
         {navItems.map((item) => (
@@ -49,8 +51,8 @@ const Sidebar = () => {
             to={item.path}
             className={({ isActive }) =>
               `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
               }`
             }
           >
@@ -59,20 +61,20 @@ const Sidebar = () => {
           </NavLink>
         ))}
       </nav>
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
               {user?.name?.charAt(0) || 'U'}
             </div>
             <div className="ml-3 overflow-hidden">
-              <p className="text-sm font-medium text-gray-700 truncate w-24">{user?.name || 'User'}</p>
-              <p className="text-xs text-gray-500 truncate w-24">{user?.email}</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate w-24">{user?.name || 'User'}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate w-24">{user?.email}</p>
             </div>
           </div>
           <button
             onClick={logout}
-            className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             title="Sign out"
           >
             <LogOut className="w-4 h-4" />

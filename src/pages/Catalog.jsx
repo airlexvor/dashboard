@@ -5,17 +5,16 @@ import {
     Filter,
     MoreHorizontal,
     AlertCircle,
-    Check,
-    TrendingDown,
-    Zap,
-    Loader
+    CheckCircle,
+    Package,
+    Plus
 } from 'lucide-react';
 import SectionHeader from '../components/SectionHeader';
 import Card from '../components/Card';
 import { db } from '../lib/db';
 
 const Catalog = () => {
-    const [activeTab, setActiveTab] = useState('all');
+    const [activeTab, setActiveTab] = useState('All Products');
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -39,184 +38,211 @@ const Catalog = () => {
             name: `New Product ${Math.floor(Math.random() * 1000)}`,
             sku: `NEW-${Math.floor(Math.random() * 1000)}`,
             price: 49.99,
-            stock: 100,
+            inventory: 100,
+            status: 'Active',
+            channels: ['Shopify'],
+            last_sync: 'Just now'
         };
 
         try {
             const { data } = await db.products.create(newProduct);
-            setProducts([data, ...products]);
+            if (data) setProducts([data, ...products]);
         } catch (error) {
             console.error('Failed to create product', error);
         }
     };
 
-    const tabs = [
-        { id: 'all', label: 'All Products' },
-        { id: 'price-match', label: 'AI Price Match' },
-        { id: 'benchmarking', label: 'Benchmarking' },
-        { id: 'optimization', label: 'Optimization' },
-        { id: 'inventory', label: 'Inventory' },
-    ];
+    const handleSeed = async () => {
+        setLoading(true);
+        const sampleProducts = [
+            { name: 'Air Pro Wireless', sku: 'AP-001', price: 199.99, inventory: 450, status: 'Active', channels: ['Shopify', 'Amazon'], last_sync: '2 mins ago' },
+            { name: 'Smart Home Hub', sku: 'SH-002', price: 149.50, inventory: 120, status: 'Active', channels: ['Shopify'], last_sync: '1 hour ago' },
+            { name: 'Ultra HD Monitor', sku: 'MN-003', price: 399.00, inventory: 85, status: 'Active', channels: ['Amazon'], last_sync: '5 mins ago' },
+            { name: 'Ergo Chair Plus', sku: 'CH-004', price: 299.99, inventory: 0, status: 'Draft', channels: [], last_sync: '1 day ago' },
+            { name: 'Mechanical Keyboard', sku: 'KB-005', price: 129.99, inventory: 200, status: 'Active', channels: ['Shopify'], last_sync: 'Just now' },
+        ];
+
+        try {
+            for (const product of sampleProducts) {
+                await db.products.create(product);
+            }
+            // Refresh list
+            const { data } = await db.products.list();
+            setProducts(data);
+        } catch (error) {
+            console.error('Failed to seed database', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="max-w-7xl mx-auto">
-            <SectionHeader
-                title="Catalog & Products"
-                description="Manage products while AiR handles pricing and market intelligence."
-                action={
-                    <button
-                        onClick={handleUpload}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-                    >
-                        <Upload className="w-4 h-4 mr-2" />
-                        Upload / Sync Products
-                    </button>
-                }
-            />
-
-            {/* Core Feature Highlight */}
-            <div className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
-                <div className="flex items-start">
-                    <div className="p-3 bg-white/20 rounded-lg mr-4 backdrop-blur-sm">
-                        <Zap className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-bold mb-1">AiR Auto-Magic Catalog</h3>
-                        <p className="text-blue-100 max-w-2xl">
-                            Upload your catalog and AiR will automatically structure data, tag products, optimize pricing based on market data, and identify winning offers.
-                        </p>
-                    </div>
-                </div>
+            <div className="mb-8">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Catalog</h1>
+                <p className="text-gray-500 dark:text-gray-400">Manage your products and sync with external platforms.</p>
             </div>
 
             {/* Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card className="flex items-center p-4">
-                    <div className="mr-4 p-3 bg-gray-100 rounded-full">
-                        <Search className="w-6 h-6 text-gray-600" />
+                <Card className="p-4 flex items-center space-x-4">
+                    <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400">
+                        <Package className="w-6 h-6" />
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500">Total Products</p>
-                        <p className="text-2xl font-bold text-gray-900">{products.length}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Total Products</p>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{products.length}</h3>
                     </div>
                 </Card>
-                <Card className="flex items-center p-4">
-                    <div className="mr-4 p-3 bg-green-100 rounded-full">
-                        <Check className="w-6 h-6 text-green-600" />
+                <Card className="p-4 flex items-center space-x-4">
+                    <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full text-green-600 dark:text-green-400">
+                        <CheckCircle className="w-6 h-6" />
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500">AI Optimized</p>
-                        <p className="text-2xl font-bold text-gray-900">{products.filter(p => p.status === 'Optimized').length}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Synced</p>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{products.filter(p => p.status === 'Active').length}</h3>
                     </div>
                 </Card>
-                <Card className="flex items-center p-4">
-                    <div className="mr-4 p-3 bg-orange-100 rounded-full">
-                        <AlertCircle className="w-6 h-6 text-orange-600" />
+                <Card className="p-4 flex items-center space-x-4">
+                    <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full text-yellow-600 dark:text-yellow-400">
+                        <AlertCircle className="w-6 h-6" />
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500">Needs Attention</p>
-                        <p className="text-2xl font-bold text-gray-900">{products.filter(p => p.status !== 'Optimized').length}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Issues</p>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">0</h3>
                     </div>
                 </Card>
             </div>
 
-            {/* Main Content Area */}
-            <Card className="p-0">
-                {/* Tabs */}
-                <div className="border-b border-gray-200 px-6">
-                    <div className="flex space-x-8 overflow-x-auto">
-                        {tabs.map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`py-4 text-sm font-medium border-b-2 whitespace-nowrap ${activeTab === tab.id
-                                    ? 'border-blue-600 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                    }`}
-                            >
-                                {tab.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Filters & Search */}
-                <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between gap-4 bg-gray-50/50">
-                    <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                        <input
-                            type="text"
-                            placeholder="Search products by name, SKU, or tag..."
-                            className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                        />
-                    </div>
-                    <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50">
-                        <Filter className="w-4 h-4 mr-2" />
-                        Filter
-                    </button>
-                </div>
-
-                {/* Product Table */}
-                <div className="overflow-x-auto">
-                    {loading ? (
-                        <div className="flex justify-center items-center h-64">
-                            <Loader className="w-8 h-8 text-blue-600 animate-spin" />
+            {/* Main Content */}
+            <Card className="overflow-hidden">
+                {/* Tabs & Actions */}
+                <div className="border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between p-4">
+                        <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                            {['All Products', 'Synced', 'Drafts', 'Archived'].map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === tab
+                                        ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                                        }`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
                         </div>
-                    ) : (
-                        <table className="w-full text-left">
-                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
-                                <tr>
-                                    <th className="px-6 py-3 font-medium">Product</th>
-                                    <th className="px-6 py-3 font-medium">Price</th>
-                                    <th className="px-6 py-3 font-medium">Market Price</th>
-                                    <th className="px-6 py-3 font-medium">Stock</th>
-                                    <th className="px-6 py-3 font-medium">AI Status</th>
-                                    <th className="px-6 py-3 font-medium text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {products.map((product) => (
-                                    <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center">
-                                                <img src={product.image} alt={product.name} className="w-10 h-10 rounded-lg object-cover mr-3" />
-                                                <div>
-                                                    <p className="font-medium text-gray-900">{product.name}</p>
-                                                    <p className="text-xs text-gray-500">{product.sku}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 font-medium text-gray-900">${product.price}</td>
-                                        <td className="px-6 py-4 text-gray-500">${product.marketPrice}</td>
-                                        <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.stock < 20 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
-                                                }`}>
-                                                {product.stock} units
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.status === 'Optimized' ? 'bg-blue-100 text-blue-800' :
-                                                product.status === 'Price High' ? 'bg-orange-100 text-orange-800' :
-                                                    'bg-gray-100 text-gray-800'
-                                                }`}>
-                                                {product.status === 'Optimized' && <Zap className="w-3 h-3 mr-1" />}
-                                                {product.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button className="text-gray-400 hover:text-gray-600">
-                                                <MoreHorizontal className="w-5 h-5" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                        <div className="flex space-x-3">
+                            <div className="relative">
+                                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search products..."
+                                    className="pl-9 pr-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                                />
+                            </div>
+                            <button className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <Filter className="w-4 h-4 mr-2" />
+                                Filter
+                            </button>
+                            <button
+                                onClick={handleUpload}
+                                className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors"
+                            >
+                                <Plus className="w-4 h-4 mr-2" />
+                                Upload / Sync Products
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="p-4 border-t border-gray-200 flex justify-center">
-                    <button className="text-sm text-blue-600 font-medium hover:text-blue-800">Load More Products</button>
+                {/* Table */}
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-50 dark:bg-gray-700/50">
+                            <tr>
+                                <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product</th>
+                                <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Price</th>
+                                <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Inventory</th>
+                                <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Channels</th>
+                                <th className="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Last Sync</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="7" className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                        Loading products...
+                                    </td>
+                                </tr>
+                            ) : products.length === 0 ? (
+                                <tr>
+                                    <td colSpan="7" className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                        <div className="flex flex-col items-center justify-center space-y-4">
+                                            <Package className="w-12 h-12 text-gray-300 dark:text-gray-600" />
+                                            <p className="text-lg font-medium">No products found</p>
+                                            <p className="text-sm">Get started by adding products or seeding the database.</p>
+                                            <button
+                                                onClick={handleSeed}
+                                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors"
+                                            >
+                                                Seed Database with Sample Data
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : products.map((product) => (
+                                <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            <div className="h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                                <Package className="w-5 h-5" />
+                                            </div>
+                                            <div className="ml-4">
+                                                <div className="text-sm font-medium text-gray-900 dark:text-white">{product.name}</div>
+                                                <div className="text-xs text-gray-500 dark:text-gray-400">SKU: {product.sku}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${product.status === 'Active'
+                                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                                            }`}>
+                                            {product.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        ${product.price}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        {product.inventory} in stock
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex space-x-2">
+                                            {product.channels && product.channels.map((channel, idx) => (
+                                                <span key={idx} className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-1 rounded border border-blue-100 dark:border-blue-800">
+                                                    {channel}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        {product.last_sync}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-4">Edit</button>
+                                        <button className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
+                                            <MoreHorizontal className="w-5 h-5" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </Card>
         </div>
