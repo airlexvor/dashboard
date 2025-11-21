@@ -9,8 +9,15 @@ import {
     Users,
     ShoppingBag,
     Activity,
-    Target
+    Target,
+    Newspaper,
+    ExternalLink,
+    Globe
 } from 'lucide-react';
+
+import newsEcommerce from '../assets/news-ecommerce.png';
+import newsCompetitorAi from '../assets/news-competitor-ai.png';
+import newsSupplyChain from '../assets/news-supply-chain.png';
 
 const Insights = () => {
     // Mock data for AI Insights
@@ -44,6 +51,64 @@ const Insights = () => {
             icon: Users,
             color: 'text-blue-500',
             bg: 'bg-blue-50 dark:bg-blue-900/20'
+        },
+        {
+            id: 4,
+            type: 'opportunity',
+            title: 'High Value Cohort',
+            description: 'New "Tech Enthusiast" segment showing 3x higher LTV than average users.',
+            action: 'Target Segment',
+            icon: Target,
+            color: 'text-purple-500',
+            bg: 'bg-purple-50 dark:bg-purple-900/20'
+        },
+        {
+            id: 5,
+            type: 'alert',
+            title: 'Cart Abandonment Spike',
+            description: 'Unusual spike in cart abandonment at payment step for international users.',
+            action: 'Investigate',
+            icon: AlertCircle,
+            color: 'text-orange-500',
+            bg: 'bg-orange-50 dark:bg-orange-900/20'
+        },
+        {
+            id: 6,
+            type: 'info',
+            title: 'Seasonal Trend',
+            description: 'Search volume for "Winter Gear" is up 200% week-over-week.',
+            action: 'Update Homepage',
+            icon: TrendingUp,
+            color: 'text-blue-500',
+            bg: 'bg-blue-50 dark:bg-blue-900/20'
+        }
+    ];
+
+    // Mock data for News
+    const newsItems = [
+        {
+            id: 1,
+            source: 'TechCrunch',
+            title: 'E-commerce trends for Q4 2025: What to expect',
+            time: '2 hours ago',
+            category: 'Market Trends',
+            image: newsEcommerce
+        },
+        {
+            id: 2,
+            source: 'Retail Dive',
+            title: 'Competitor "ShopifyPlus" launches new AI features',
+            time: '5 hours ago',
+            category: 'Competitor Watch',
+            image: newsCompetitorAi
+        },
+        {
+            id: 3,
+            source: 'Bloomberg',
+            title: 'Global supply chain disruptions ease, lowering shipping costs',
+            time: '1 day ago',
+            category: 'Logistics',
+            image: newsSupplyChain
         }
     ];
 
@@ -74,7 +139,7 @@ const Insights = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Daily Briefing</h2>
-                    <div className="space-y-4">
+                    <div className="space-y-4 h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                         {aiInsights.map((insight) => (
                             <div key={insight.id} className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
                                 <div className="flex items-start gap-4">
@@ -177,6 +242,49 @@ const Insights = () => {
                             </div>
                             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">{stat.title}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Industry Monitor (News) */}
+            <div>
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <Globe className="w-5 h-5 text-gray-500" />
+                        Industry Monitor
+                    </h2>
+                    <button className="text-sm text-purple-600 dark:text-purple-400 hover:underline">
+                        Customize Feed
+                    </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {newsItems.map((item) => (
+                        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden group cursor-pointer hover:shadow-md transition-all">
+                            <div className="h-32 overflow-hidden relative">
+                                <img
+                                    src={item.image}
+                                    alt={item.title}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                                <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md">
+                                    {item.category}
+                                </div>
+                            </div>
+                            <div className="p-5">
+                                <div className="flex items-center gap-2 mb-2 text-xs text-gray-500 dark:text-gray-400">
+                                    <Newspaper className="w-3 h-3" />
+                                    <span>{item.source}</span>
+                                    <span>•</span>
+                                    <span>{item.time}</span>
+                                </div>
+                                <h3 className="font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                                    {item.title}
+                                </h3>
+                                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                                    Read Article <ExternalLink className="w-3 h-3 ml-1" />
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>

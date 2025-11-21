@@ -306,7 +306,7 @@ const Automations = () => {
             {/* Automation Templates */}
             <div className="mb-8">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Start Templates</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     {templates.map((template, index) => {
                         const colors = getColorClasses(template.color);
                         const Icon = template.icon;
