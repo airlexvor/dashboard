@@ -9,6 +9,18 @@
     .dark body {
         @apply bg-gray-900 text-white;
     }
+
+    /* Cursor pointer for all interactive elements */
+    button,
+    a,
+    [role="button"],
+    [onclick],
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    select {
+        cursor: pointer;
+    }
 }
 
 @keyframes fadeIn {

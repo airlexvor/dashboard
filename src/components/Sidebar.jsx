@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard,
@@ -21,6 +21,9 @@ import logo from '../assets/logo-black.png';
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const [indicatorStyle, setIndicatorStyle] = useState({ top: 0, height: 0, opacity: 0 });
+  const navRefs = useRef({});
 
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -37,6 +40,28 @@ const Sidebar = () => {
     { name: 'Help Center', path: '/help', icon: HelpCircle },
   ];
 
+  useEffect(() => {
+    // Find the active nav item
+    const activeItem = navItems.find(item => {
+      if (item.path === '/') {
+        return location.pathname === '/';
+      }
+      return location.pathname.startsWith(item.path);
+    });
+
+    if (activeItem && navRefs.current[activeItem.path]) {
+      const element = navRefs.current[activeItem.path];
+      const rect = element.getBoundingClientRect();
+      const parentRect = element.parentElement.getBoundingClientRect();
+
+      setIndicatorStyle({
+        top: element.offsetTop,
+        height: rect.height,
+        opacity: 1
+      });
+    }
+  }, [location.pathname]);
+
   return (
     <div className="h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-colors duration-200">
       <div className="p-6 flex justify-center">
@@ -44,15 +69,26 @@ const Sidebar = () => {
         {/* You might want a white version of the logo for dark mode, or filter it */}
         <img src={logo} alt="AiR Logo" className="h-8 hidden dark:block filter invert" />
       </div>
-      <nav className="flex-1 overflow-y-auto px-4 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-4 space-y-1 relative">
+        {/* Animated background indicator */}
+        <div
+          className="absolute left-4 right-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-all duration-300 ease-in-out pointer-events-none"
+          style={{
+            top: `${indicatorStyle.top}px`,
+            height: `${indicatorStyle.height}px`,
+            opacity: indicatorStyle.opacity
+          }}
+        />
+
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
+            ref={(el) => (navRefs.current[item.path] = el)}
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive
-                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+              `relative flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors z-10 ${isActive
+                ? 'text-blue-600 dark:text-blue-400'
+                : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
               }`
             }
           >
