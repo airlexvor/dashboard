@@ -2,41 +2,36 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Mic } from 'lucide-react';
 
 const AIAssistant = () => {
-    // ... (lines 4-178 remain unchanged)
-    <div className="relative w-32 h-32 flex items-center justify-center">
-        <button className="flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg hover:scale-105 transition-transform z-10">
-            <Mic className="h-10 w-10 text-white" />
-        </button>
-        const [messages, setMessages] = useState([
+    const [messages, setMessages] = useState([
         {
             id: 1,
-        text: "Hello! I'm your AI assistant. I can help you with analyzing trends, managing your catalog, pulling data insights, and much more. How can I assist you today?",
-        sender: 'ai',
-        timestamp: new Date(Date.now() - 60000)
+            text: "Hello! I'm your AI assistant. I can help you with analyzing trends, managing your catalog, pulling data insights, and much more. How can I assist you today?",
+            sender: 'ai',
+            timestamp: new Date(Date.now() - 60000)
         }
-        ]);
-        const [inputMessage, setInputMessage] = useState('');
-        const [isTyping, setIsTyping] = useState(false);
-        const messagesEndRef = useRef(null);
-        const chatContainerRef = useRef(null);
+    ]);
+    const [inputMessage, setInputMessage] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+    const messagesEndRef = useRef(null);
+    const chatContainerRef = useRef(null);
 
     const scrollToBottom = () => {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     useEffect(() => {
-            scrollToBottom();
+        scrollToBottom();
     }, [messages]);
 
     const handleSendMessage = (e) => {
-            e.preventDefault();
+        e.preventDefault();
         if (!inputMessage.trim()) return;
 
         const userMessage = {
             id: Date.now(),
-        text: inputMessage,
-        sender: 'user',
-        timestamp: new Date()
+            text: inputMessage,
+            sender: 'user',
+            timestamp: new Date()
         };
 
         setMessages(prev => [...prev, userMessage]);
@@ -46,23 +41,23 @@ const AIAssistant = () => {
         // Simulate AI response
         setTimeout(() => {
             const aiResponse = {
-            id: Date.now() + 1,
-        text: generateAIResponse(inputMessage),
-        sender: 'ai',
-        timestamp: new Date()
+                id: Date.now() + 1,
+                text: generateAIResponse(inputMessage),
+                sender: 'ai',
+                timestamp: new Date()
             };
             setMessages(prev => [...prev, aiResponse]);
-        setIsTyping(false);
+            setIsTyping(false);
         }, 1000 + Math.random() * 1000);
     };
 
     const generateAIResponse = (userInput) => {
         const responses = {
             catalog: "I can help you manage your catalog. You can add, edit, or remove items, analyze product performance, and get recommendations for inventory optimization.",
-        trends: "Based on recent data, I've noticed some interesting trends in your sales patterns. Would you like me to provide a detailed analysis?",
-        data: "I have access to your comprehensive data. What specific metrics or insights would you like me to pull for you?",
-        help: "I can assist with answering questions, analyzing trends, suggesting actions, pulling data, managing your catalog, and providing market insights. What would you like to explore?",
-        default: "I understand. Let me help you with that. Could you provide more specific details about what you'd like to know or accomplish?"
+            trends: "Based on recent data, I've noticed some interesting trends in your sales patterns. Would you like me to provide a detailed analysis?",
+            data: "I have access to your comprehensive data. What specific metrics or insights would you like me to pull for you?",
+            help: "I can assist with answering questions, analyzing trends, suggesting actions, pulling data, managing your catalog, and providing market insights. What would you like to explore?",
+            default: "I understand. Let me help you with that. Could you provide more specific details about what you'd like to know or accomplish?"
         };
 
         const lowerInput = userInput.toLowerCase();
@@ -74,19 +69,19 @@ const AIAssistant = () => {
     };
 
     const formatTime = (date) => {
-        return date.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit' });
+        return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     };
 
-        const capabilities = [
+    const capabilities = [
         'Answer questions',
         'Analyze trends',
         'Suggest actions',
         'Pull data',
         'Manage catalog',
         'Market insights'
-        ];
+    ];
 
-        return (
+    return (
         <div className="flex flex-col md:flex-row h-full">
             <div className="flex-1 flex flex-col items-center justify-center p-4 overflow-auto w-full md:w-1/2">
                 <div className="w-full mb-4">
@@ -183,9 +178,7 @@ const AIAssistant = () => {
             <div className="flex-1 flex flex-col items-center justify-center p-4 w-full md:w-1/2">
                 <div className="relative w-32 h-32 flex items-center justify-center">
                     <button className="flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg hover:scale-105 transition-transform z-10">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 1v22m11-11H1" />
-                        </svg>
+                        <Mic className="h-10 w-10 text-white" />
                     </button>
                     <div className="absolute inset-0 rounded-full bg-purple-300 opacity-50 animate-pulse"></div>
                     <div className="absolute inset-2 rounded-full bg-purple-400 opacity-70 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
@@ -194,7 +187,7 @@ const AIAssistant = () => {
                 <div className="mt-4 text-gray-600 dark:text-gray-300">Click to speak</div>
             </div>
         </div>
-        );
+    );
 };
 
-        export default AIAssistant;
+export default AIAssistant;
