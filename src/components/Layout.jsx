@@ -1,41 +1,31 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
-const Layout = ({ sidebarRef }) => {
+const Layout = () => {
   const mainRef = useRef(null);
   const location = useLocation();
+  const [navControls, setNavControls] = useState(null);
 
   // Global Tab handler - always go to navbar
   useEffect(() => {
     const handleGlobalTab = (e) => {
-      if (e.key === 'Tab') {
+      if (e.key === 'Tab' && navControls) {
         e.preventDefault();
-        // Always focus the navbar when Tab is pressed
-        const navElement = document.querySelector('nav[tabindex="0"]');
-        if (navElement) {
-          // If navbar doesn't have focus, focus it first
-          if (document.activeElement !== navElement) {
-            navElement.focus();
-          }
-          // Dispatch a Tab key event to the navbar to trigger navigation
-          const tabEvent = new KeyboardEvent('keydown', {
-            key: 'Tab',
-            code: 'Tab',
-            keyCode: 9,
-            which: 9,
-            shiftKey: e.shiftKey,
-            bubbles: true,
-            cancelable: true
-          });
-          navElement.dispatchEvent(tabEvent);
+        // Focus the navbar first
+        navControls.focusNav();
+        // Then move to next/prev item
+        if (e.shiftKey) {
+          navControls.movePrev();
+        } else {
+          navControls.moveNext();
         }
       }
     };
 
     window.addEventListener('keydown', handleGlobalTab);
     return () => window.removeEventListener('keydown', handleGlobalTab);
-  }, []);
+  }, [navControls]);
 
   // Focus main content on mount and when route changes
   useEffect(() => {
@@ -102,7 +92,7 @@ const Layout = ({ sidebarRef }) => {
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <Sidebar />
+      <Sidebar onTabNavigate={setNavControls} />
       <main
         ref={mainRef}
         tabIndex={0}

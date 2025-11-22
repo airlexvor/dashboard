@@ -20,7 +20,7 @@ import {
 
 import logo from '../assets/logo-black.png';
 
-const Sidebar = () => {
+const Sidebar = ({ onTabNavigate }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -44,6 +44,26 @@ const Sidebar = () => {
     { name: 'Settings', path: '/settings', icon: Settings },
     { name: 'Help Center', path: '/help', icon: HelpCircle },
   ];
+
+  // Expose navigation function to parent
+  useEffect(() => {
+    if (onTabNavigate) {
+      onTabNavigate({
+        focusNav: () => {
+          if (navContainerRef.current) {
+            navContainerRef.current.focus();
+            setIsNavFocused(true);
+          }
+        },
+        moveNext: () => {
+          setFocusedIndex(prev => (prev + 1) % navItems.length);
+        },
+        movePrev: () => {
+          setFocusedIndex(prev => (prev - 1 + navItems.length) % navItems.length);
+        }
+      });
+    }
+  }, [onTabNavigate]);
 
   useEffect(() => {
     // Find the active nav item
