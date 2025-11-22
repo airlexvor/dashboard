@@ -50,7 +50,7 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div>
             <SectionHeader
                 title="Dashboard"
                 description="A high-level overview of everything the business cares about."

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from './ThemeToggle';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -63,7 +64,7 @@ const Sidebar = () => {
   }, [location.pathname]);
 
   return (
-    <div className="h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-colors duration-200">
+    <div className="h-[calc(100vh-2rem)] w-64 bg-white dark:bg-gray-800 m-4 rounded-2xl shadow-xl flex flex-col transition-colors duration-200">
       <div className="p-6 flex justify-center">
         <img src={logo} alt="AiR Logo" className="h-8 block dark:hidden" />
         {/* You might want a white version of the logo for dark mode, or filter it */}
@@ -97,6 +98,11 @@ const Sidebar = () => {
           </NavLink>
         ))}
       </nav>
+      <div className="px-4 pb-3">
+        <div className="flex justify-center">
+          <ThemeToggle />
+        </div>
+      </div>
       <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center">

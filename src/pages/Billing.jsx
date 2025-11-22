@@ -58,6 +58,8 @@ const Billing = () => {
         }
     ];
 
+    const currentPlan = 'Growth';
+
     return (
         <div className="space-y-8">
             <div className="space-y-6">
@@ -67,18 +69,18 @@ const Billing = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <h3 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">Current Plan</h3>
-                        <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Pro Plan</div>
-                        <p className="text-gray-500 dark:text-gray-400 mb-4">$99/month</p>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{currentPlan}</div>
+                        <p className="text-gray-500 dark:text-gray-400 mb-4">$1,001-$10,000/month</p>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-1">
-                            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: '45%' }}></div>
+                            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: '10%' }}></div>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">45% of credits used</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">1,000 of 10,000 credits used (10%)</p>
                     </div>
 
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                         <h3 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">Quick Actions</h3>
                         <div className="space-y-2">
-                            {['Top-up Credits', 'Manage Payment Methods', 'View Billing History', 'Upgrade Plan'].map((action) => (
+                            {['Top-up Credits', 'Manage Payment Methods', 'View Billing History'].map((action) => (
                                 <button key={action} className="w-full text-left px-4 py-2 border border-gray-200 dark:border-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
                                     {action}
                                 </button>
@@ -90,48 +92,57 @@ const Billing = () => {
 
             <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Available Plans</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {plans.map((plan) => (
-                        <div key={plan.name} className="bg-black text-white p-8 rounded-xl flex flex-col h-full border border-gray-800 hover:border-gray-600 transition-colors">
-                            <h3 className="text-3xl font-bold mb-8 text-center">{plan.name}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
+                    {plans.map((plan) => {
+                        const isCurrentPlan = plan.name === currentPlan;
+                        return (
+                            <div key={plan.name} className={`bg-white dark:bg-gray-800 p-4 rounded-xl flex flex-col h-full border transition-colors shadow-sm ${isCurrentPlan ? 'border-blue-500 dark:border-blue-500 ring-1 ring-blue-500' : 'border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500'}`}>
+                                <h3 className="text-xl font-bold mb-4 text-center text-gray-900 dark:text-white">{plan.name}</h3>
 
-                            <div className="space-y-6 flex-grow">
-                                <div className="text-center">
-                                    <p className="text-sm text-gray-400 mb-1">Marketing Credits</p>
-                                    <p className="font-medium">{plan.marketingCredits}</p>
+                                <div className="space-y-4 flex-grow">
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Marketing Credits</p>
+                                        <p className="font-medium text-sm text-gray-900 dark:text-white">{plan.marketingCredits}</p>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Cost Per Discovery</p>
+                                        <p className="font-medium text-sm text-gray-900 dark:text-white">{plan.costPerDiscovery}</p>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Commission on Sales</p>
+                                        <p className="font-medium text-sm text-gray-900 dark:text-white">{plan.commission}</p>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">User Point Multiplier</p>
+                                        <p className="font-medium text-sm text-gray-900 dark:text-white">{plan.multiplier}</p>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">A.I. Visibility and Perks</p>
+                                        <p className="font-medium text-xs text-gray-900 dark:text-white">{plan.perks}</p>
+                                    </div>
+
+                                    <div className="text-center pt-3 border-t border-gray-200 dark:border-gray-700">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Ideal For</p>
+                                        <p className="text-xs text-gray-700 dark:text-gray-300">{plan.idealFor}</p>
+                                    </div>
                                 </div>
 
-                                <div className="text-center">
-                                    <p className="text-sm text-gray-400 mb-1">Cost Per Discovery</p>
-                                    <p className="font-medium">{plan.costPerDiscovery}</p>
-                                </div>
-
-                                <div className="text-center">
-                                    <p className="text-sm text-gray-400 mb-1">Commission on Sales</p>
-                                    <p className="font-medium">{plan.commission}</p>
-                                </div>
-
-                                <div className="text-center">
-                                    <p className="text-sm text-gray-400 mb-1">User Point Multiplier</p>
-                                    <p className="font-medium">{plan.multiplier}</p>
-                                </div>
-
-                                <div className="text-center">
-                                    <p className="text-sm text-gray-400 mb-1">A.I. Visibility and Perks</p>
-                                    <p className="font-medium text-sm">{plan.perks}</p>
-                                </div>
-
-                                <div className="text-center pt-4 border-t border-gray-800">
-                                    <p className="text-sm text-gray-400 mb-2">Ideal For</p>
-                                    <p className="text-sm text-gray-300">{plan.idealFor}</p>
-                                </div>
+                                <button
+                                    className={`w-full mt-6 font-bold py-2 text-sm rounded-lg transition-colors ${isCurrentPlan
+                                        ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-default'
+                                        : 'bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200'
+                                        }`}
+                                    disabled={isCurrentPlan}
+                                >
+                                    {isCurrentPlan ? 'Current Plan' : 'Choose'}
+                                </button>
                             </div>
-
-                            <button className="w-full mt-8 bg-white text-black font-bold py-3 rounded-lg hover:bg-gray-200 transition-colors">
-                                Choose {plan.name}
-                            </button>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </div>

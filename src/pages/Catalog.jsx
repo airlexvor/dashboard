@@ -77,9 +77,9 @@ const Catalog = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Catalog</h1>
+        <div>
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Catalog</h1>
                 <p className="text-gray-500 dark:text-gray-400">Manage your products and sync with external platforms.</p>
             </div>
 

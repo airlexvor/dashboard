@@ -82,12 +82,12 @@ const AIAssistant = () => {
 
     return (
         <div className="space-y-6 h-full flex flex-col items-center">
-            <div className="w-full max-w-4xl">
+            <div className="w-full mb-4">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">AI Assistant (Live Chat)</h1>
                 <p className="text-gray-600 dark:text-gray-400">Businesses can talk directly to THEIR AI.</p>
             </div>
 
-            <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col flex-1 overflow-hidden" style={{ maxHeight: 'calc(100vh - 250px)', minHeight: '500px' }}>
+            <div className="w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col flex-1 overflow-hidden" style={{ maxHeight: 'calc(100vh - 250px)', minHeight: '500px' }}>
                 {/* Chat Messages Area */}
                 <div
                     ref={chatContainerRef}

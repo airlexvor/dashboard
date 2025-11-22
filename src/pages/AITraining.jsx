@@ -117,8 +117,8 @@ const AITraining = () => {
     const completionPercentage = getCompletionPercentage();
 
     return (
-        <div className="space-y-6 max-w-5xl mx-auto">
-            <div>
+        <div className="space-y-6">
+            <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">AI Training</h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-2">Train your AI assistant to represent your brand perfectly</p>
             </div>

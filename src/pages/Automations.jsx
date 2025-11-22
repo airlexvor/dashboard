@@ -230,7 +230,7 @@ const Automations = () => {
     );
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div>
             <SectionHeader
                 title="Automations"
                 description="Intelligent workflows that run your business on autopilot"
