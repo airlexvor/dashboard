@@ -99,9 +99,14 @@ const ResetPassword = () => {
                     <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200 dark:border-gray-700">
                         {!user ? (
                             <div className="text-center">
-                                <div className="mb-4 bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg flex items-center justify-center text-sm">
-                                    <AlertCircle className="w-4 h-4 mr-2" />
-                                    Invalid or expired reset link.
+                                <div className="mb-4 bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg flex flex-col items-center justify-center text-sm">
+                                    <div className="flex items-center mb-2">
+                                        <AlertCircle className="w-4 h-4 mr-2" />
+                                        Invalid or expired reset link.
+                                    </div>
+                                    <div className="text-xs text-yellow-600 break-all">
+                                        Debug: {window.location.hash ? 'Hash present' : 'No hash'}
+                                    </div>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
                                     Please request a new password reset link from the login page.

@@ -11,15 +11,31 @@ export const AuthProvider = ({ children }) => {
         // Check active session on mount
         const checkSession = async () => {
             try {
+                // Check if we have a session first
                 const { data: { session }, error } = await supabase.auth.getSession();
+
                 if (error) {
                     console.error("Error checking session:", error);
                 }
+
                 console.log("Session checked:", session);
-                setUser(session?.user ?? null);
+
+                // If we have a session, set it
+                if (session) {
+                    setUser(session.user);
+                }
+
+                // If no session, but we have a recovery hash, we might be in the middle of a flow
+                // The onAuthStateChange will catch it, so we don't want to set loading=false yet if we expect an event
+                const isRecovery = window.location.hash && window.location.hash.includes('type=recovery');
+                if (!isRecovery) {
+                    setLoading(false);
+                } else {
+                    console.log("Recovery hash detected, waiting for auth state change...");
+                }
+
             } catch (err) {
                 console.error("Unexpected error checking session:", err);
-            } finally {
                 setLoading(false);
             }
         };
@@ -28,9 +44,11 @@ export const AuthProvider = ({ children }) => {
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             console.log("Auth state changed:", event, session);
+
             if (event === 'PASSWORD_RECOVERY') {
                 console.log("Password recovery event detected");
             }
+
             setUser(session?.user ?? null);
             setLoading(false);
         });
