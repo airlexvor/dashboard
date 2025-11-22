@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 import {
@@ -23,8 +23,12 @@ import logo from '../assets/logo-black.png';
 const Sidebar = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [indicatorStyle, setIndicatorStyle] = useState({ top: 0, height: 0, opacity: 0 });
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [isNavFocused, setIsNavFocused] = useState(false);
   const navRefs = useRef({});
+  const navContainerRef = useRef(null);
 
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -60,8 +64,53 @@ const Sidebar = () => {
         height: rect.height,
         opacity: 1
       });
+
+      // Set focused index to active item
+      const activeIndex = navItems.findIndex(item => item.path === activeItem.path);
+      if (activeIndex !== -1) {
+        setFocusedIndex(activeIndex);
+      }
     }
   }, [location.pathname]);
+
+  // Focus the nav container on mount and route change
+  useEffect(() => {
+    if (navContainerRef.current) {
+      navContainerRef.current.focus();
+      setIsNavFocused(true);
+    }
+  }, [location.pathname]);
+
+  const handleKeyDown = (e) => {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex(prev => (prev + 1) % navItems.length);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex(prev => (prev - 1 + navItems.length) % navItems.length);
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        navigate(navItems[focusedIndex].path);
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Scroll focused item into view
+  useEffect(() => {
+    const focusedPath = navItems[focusedIndex]?.path;
+    if (focusedPath && navRefs.current[focusedPath]) {
+      navRefs.current[focusedPath].scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth'
+      });
+    }
+  }, [focusedIndex]);
 
   return (
     <div className="h-[calc(100vh-2rem)] w-64 bg-white dark:bg-gray-800 m-4 rounded-2xl shadow-xl flex flex-col transition-colors duration-200">
@@ -70,7 +119,14 @@ const Sidebar = () => {
         {/* You might want a white version of the logo for dark mode, or filter it */}
         <img src={logo} alt="AiR Logo" className="h-8 hidden dark:block filter invert" />
       </div>
-      <nav className="flex-1 overflow-y-auto px-4 space-y-1 relative">
+      <nav
+        ref={navContainerRef}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onFocus={() => setIsNavFocused(true)}
+        onBlur={() => setIsNavFocused(false)}
+        className="flex-1 overflow-y-auto px-4 py-2 space-y-1 relative focus:outline-none"
+      >
         {/* Animated background indicator */}
         <div
           className="absolute left-4 right-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-all duration-300 ease-in-out pointer-events-none"
@@ -81,7 +137,7 @@ const Sidebar = () => {
           }}
         />
 
-        {navItems.map((item) => (
+        {navItems.map((item, index) => (
           <NavLink
             key={item.path}
             to={item.path}
@@ -90,6 +146,9 @@ const Sidebar = () => {
               `relative flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors z-10 ${isActive
                 ? 'text-blue-600 dark:text-blue-400'
                 : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+              } ${focusedIndex === index && !isActive && isNavFocused
+                ? 'ring-2 ring-blue-300 dark:ring-blue-700'
+                : ''
               }`
             }
           >
