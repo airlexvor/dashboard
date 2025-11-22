@@ -10,14 +10,27 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         // Check active session on mount
         const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            setUser(session?.user ?? null);
-            setLoading(false);
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) {
+                    console.error("Error checking session:", error);
+                }
+                console.log("Session checked:", session);
+                setUser(session?.user ?? null);
+            } catch (err) {
+                console.error("Unexpected error checking session:", err);
+            } finally {
+                setLoading(false);
+            }
         };
         checkSession();
 
         // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log("Auth state changed:", event, session);
+            if (event === 'PASSWORD_RECOVERY') {
+                console.log("Password recovery event detected");
+            }
             setUser(session?.user ?? null);
             setLoading(false);
         });
@@ -61,8 +74,20 @@ export const AuthProvider = ({ children }) => {
     };
 
     const updatePassword = async (password) => {
+        console.log("Attempting to update password...");
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log("Current session for update:", session);
+
+        if (!session) {
+            throw new Error('Auth session missing! Please try clicking the reset link again.');
+        }
+
         const { error } = await supabase.auth.updateUser({ password });
-        if (error) throw error;
+        if (error) {
+            console.error("Error updating password:", error);
+            throw error;
+        }
+        console.log("Password updated successfully");
     };
 
     return (
