@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
 const Layout = ({ sidebarRef }) => {
   const mainRef = useRef(null);
+  const location = useLocation();
 
   // Global Tab handler - always go to navbar
   useEffect(() => {
@@ -13,7 +14,21 @@ const Layout = ({ sidebarRef }) => {
         // Always focus the navbar when Tab is pressed
         const navElement = document.querySelector('nav[tabindex="0"]');
         if (navElement) {
-          navElement.focus();
+          // If navbar doesn't have focus, focus it first
+          if (document.activeElement !== navElement) {
+            navElement.focus();
+          }
+          // Dispatch a Tab key event to the navbar to trigger navigation
+          const tabEvent = new KeyboardEvent('keydown', {
+            key: 'Tab',
+            code: 'Tab',
+            keyCode: 9,
+            which: 9,
+            shiftKey: e.shiftKey,
+            bubbles: true,
+            cancelable: true
+          });
+          navElement.dispatchEvent(tabEvent);
         }
       }
     };
@@ -21,6 +36,43 @@ const Layout = ({ sidebarRef }) => {
     window.addEventListener('keydown', handleGlobalTab);
     return () => window.removeEventListener('keydown', handleGlobalTab);
   }, []);
+
+  // Focus main content on mount and when route changes
+  useEffect(() => {
+    if (mainRef.current) {
+      // Small delay to ensure content has rendered
+      setTimeout(() => {
+        mainRef.current?.focus();
+      }, 100);
+    }
+  }, [location.pathname]);
+
+  // Handle arrow keys for scrolling when main has focus
+  const handleMainKeyDown = (e) => {
+    const scrollAmount = 50;
+    const pageScrollAmount = mainRef.current?.clientHeight ? mainRef.current.clientHeight - 100 : 500;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        mainRef.current?.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        mainRef.current?.scrollBy({ top: -scrollAmount, behavior: 'smooth' });
+        break;
+      case 'PageDown':
+        e.preventDefault();
+        mainRef.current?.scrollBy({ top: pageScrollAmount, behavior: 'smooth' });
+        break;
+      case 'PageUp':
+        e.preventDefault();
+        mainRef.current?.scrollBy({ top: -pageScrollAmount, behavior: 'smooth' });
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleMainClick = (e) => {
     // Don't interfere with clicks on interactive elements
@@ -53,9 +105,10 @@ const Layout = ({ sidebarRef }) => {
       <Sidebar />
       <main
         ref={mainRef}
-        tabIndex={-1}
+        tabIndex={0}
         onClick={handleMainClick}
-        className="flex-1 overflow-y-auto relative mt-4 mr-4 mb-4 rounded-2xl bg-white dark:bg-gray-800 shadow-xl focus:outline-none cursor-pointer"
+        onKeyDown={handleMainKeyDown}
+        className="flex-1 overflow-y-auto relative mt-4 mr-4 mb-4 rounded-2xl bg-white dark:bg-gray-800 shadow-xl focus:outline-none"
       >
         <div className="py-6 px-8">
           <Outlet />

@@ -86,14 +86,6 @@ const Sidebar = () => {
           setFocusedIndex(prev => (prev + 1) % navItems.length);
         }
         break;
-      case 'ArrowDown':
-        e.preventDefault();
-        setFocusedIndex(prev => (prev + 1) % navItems.length);
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setFocusedIndex(prev => (prev - 1 + navItems.length) % navItems.length);
-        break;
       case 'Enter':
       case ' ':
         e.preventDefault();
