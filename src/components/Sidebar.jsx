@@ -73,18 +73,10 @@ const Sidebar = () => {
     }
   }, [location.pathname]);
 
-  // Focus the nav container on mount and route change
-  useEffect(() => {
-    if (navContainerRef.current) {
-      navContainerRef.current.focus();
-      setIsNavFocused(true);
-    }
-  }, [location.pathname]);
-
   const handleKeyDown = (e) => {
     switch (e.key) {
       case 'Tab':
-        // Prevent default Tab behavior and treat it like arrow keys
+        // Prevent default Tab behavior and treat it like arrow keys (stay within navbar)
         e.preventDefault();
         if (e.shiftKey) {
           // Shift+Tab goes up
@@ -169,7 +161,7 @@ const Sidebar = () => {
           </NavLink>
         ))}
       </nav>
-      <div className="px-4 pb-3">
+      <div className="px-4 pb-3" tabIndex={-1}>
         <div className="flex justify-center">
           <ThemeToggle />
         </div>
@@ -187,6 +179,7 @@ const Sidebar = () => {
           </div>
           <button
             onClick={logout}
+            tabIndex={-1}
             className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
             title="Sign out"
           >
