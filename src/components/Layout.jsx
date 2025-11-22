@@ -100,7 +100,7 @@ const Layout = () => {
         onKeyDown={handleMainKeyDown}
         className="flex-1 overflow-y-auto relative mt-4 mr-4 mb-4 rounded-2xl bg-white dark:bg-gray-800 shadow-xl focus:outline-none"
       >
-        <div className="py-6 px-8">
+        <div className="py-6 px-8" style={{ height: '100%' }}>
           <Outlet />
         </div>
       </main>
