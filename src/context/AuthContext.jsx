@@ -47,6 +47,8 @@ export const AuthProvider = ({ children }) => {
 
             if (event === 'PASSWORD_RECOVERY') {
                 console.log("Password recovery event detected");
+            } else if (event === 'SIGNED_IN') {
+                console.log("User signed in (possibly via PKCE exchange)");
             }
 
             setUser(session?.user ?? null);
@@ -85,8 +87,11 @@ export const AuthProvider = ({ children }) => {
     };
 
     const resetPassword = async (email) => {
+        const redirectUrl = 'https://dashboard-lexvor.vercel.app/reset-password';
+        console.log("Sending password reset with redirect URL:", redirectUrl);
+
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password`,
+            redirectTo: redirectUrl,
         });
         if (error) throw error;
     };

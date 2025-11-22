@@ -105,7 +105,7 @@ const ResetPassword = () => {
                                         Invalid or expired reset link.
                                     </div>
                                     <div className="text-xs text-yellow-600 break-all">
-                                        Debug: {window.location.hash ? 'Hash present' : 'No hash'}
+                                        Debug: {window.location.hash ? 'Hash present' : 'No hash'}, {new URLSearchParams(window.location.search).get('code') ? 'Code present' : 'No code'}
                                     </div>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
