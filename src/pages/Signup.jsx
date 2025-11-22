@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, User, ArrowRight, AlertCircle } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 
 import logo from '../assets/logo-black.png';
@@ -11,6 +11,7 @@ const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const { signup } = useAuth();
     const navigate = useNavigate();
@@ -21,8 +22,15 @@ const Signup = () => {
         setLoading(true);
 
         try {
-            await signup(name, email, password);
-            navigate('/');
+            const user = await signup(name, email, password);
+            if (user && !user.email_confirmed_at) {
+                setSuccessMessage('Account created! Please check your email to confirm your account.');
+                setName('');
+                setEmail('');
+                setPassword('');
+            } else {
+                navigate('/');
+            }
         } catch (err) {
             setError(err.message || 'Failed to create an account.');
         } finally {
@@ -56,6 +64,13 @@ const Signup = () => {
                         <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center text-sm">
                             <AlertCircle className="w-4 h-4 mr-2" />
                             {error}
+                        </div>
+                    )}
+
+                    {successMessage && (
+                        <div className="mb-4 bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg flex items-center text-sm">
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            {successMessage}
                         </div>
                     )}
 
