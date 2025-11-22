@@ -1,3 +1,4 @@
+// AI Assistant Page
 import React, { useState, useRef, useEffect } from 'react';
 import { Mic } from 'lucide-react';
 
