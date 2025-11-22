@@ -15,12 +15,13 @@ import {
   CreditCard,
   Settings,
   HelpCircle,
-  LogOut
+  LogOut,
+  X
 } from 'lucide-react';
 
 import logo from '../assets/logo-black.png';
 
-const Sidebar = ({ onTabNavigate }) => {
+const Sidebar = ({ onTabNavigate, isOpen, onClose }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,13 +78,14 @@ const Sidebar = ({ onTabNavigate }) => {
     if (activeItem && navRefs.current[activeItem.path]) {
       const element = navRefs.current[activeItem.path];
       const rect = element.getBoundingClientRect();
-      const parentRect = element.parentElement.getBoundingClientRect();
-
-      setIndicatorStyle({
-        top: element.offsetTop,
-        height: rect.height,
-        opacity: 1
-      });
+      // On mobile, the sidebar might be hidden, so we need to check if we can get dimensions
+      if (rect.height > 0) {
+        setIndicatorStyle({
+          top: element.offsetTop,
+          height: rect.height,
+          opacity: 1
+        });
+      }
 
       // Set focused index to active item
       const activeIndex = navItems.findIndex(item => item.path === activeItem.path);
@@ -91,7 +93,7 @@ const Sidebar = ({ onTabNavigate }) => {
         setFocusedIndex(activeIndex);
       }
     }
-  }, [location.pathname]);
+  }, [location.pathname, isOpen]); // Re-run when sidebar opens
 
   const handleKeyDown = (e) => {
     switch (e.key) {
@@ -110,6 +112,9 @@ const Sidebar = ({ onTabNavigate }) => {
       case ' ':
         e.preventDefault();
         navigate(navItems[focusedIndex].path);
+        if (window.innerWidth < 768 && onClose) {
+          onClose();
+        }
         break;
       default:
         break;
@@ -127,79 +132,111 @@ const Sidebar = ({ onTabNavigate }) => {
     }
   }, [focusedIndex]);
 
-  return (
-    <div className="h-[calc(100vh-2rem)] w-64 bg-white dark:bg-gray-800 m-4 rounded-2xl shadow-xl flex flex-col transition-colors duration-200">
-      <div className="p-6 flex justify-center">
-        <img src={logo} alt="AiR Logo" className="h-8 block dark:hidden" />
-        {/* You might want a white version of the logo for dark mode, or filter it */}
-        <img src={logo} alt="AiR Logo" className="h-8 hidden dark:block filter invert" />
-      </div>
-      <nav
-        ref={navContainerRef}
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
-        onFocus={() => setIsNavFocused(true)}
-        onBlur={() => setIsNavFocused(false)}
-        className="flex-1 overflow-y-auto px-4 py-2 space-y-1 relative focus:outline-none"
-      >
-        {/* Animated background indicator */}
-        <div
-          className="absolute left-4 right-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-all duration-300 ease-in-out pointer-events-none"
-          style={{
-            top: `${indicatorStyle.top}px`,
-            height: `${indicatorStyle.height}px`,
-            opacity: indicatorStyle.opacity
-          }}
-        />
+  const handleLinkClick = () => {
+    if (window.innerWidth < 768 && onClose) {
+      onClose();
+    }
+  };
 
-        {navItems.map((item, index) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            ref={(el) => (navRefs.current[item.path] = el)}
-            tabIndex={-1}
-            className={({ isActive }) =>
-              `relative flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors z-10 ${isActive
-                ? 'text-blue-600 dark:text-blue-400'
-                : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-              } ${focusedIndex === index && !isActive && isNavFocused
-                ? 'ring-2 ring-blue-300 dark:ring-blue-700'
-                : ''
-              }`
-            }
-          >
-            <item.icon className="w-5 h-5 mr-3" />
-            {item.name}
-          </NavLink>
-        ))}
-      </nav>
-      <div className="px-4 pb-3" tabIndex={-1}>
-        <div className="flex justify-center">
-          <ThemeToggle />
-        </div>
-      </div>
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
-              {user?.name?.charAt(0) || 'U'}
-            </div>
-            <div className="ml-3 overflow-hidden">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate w-24">{user?.name || 'User'}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate w-24">{user?.email}</p>
-            </div>
+  const sidebarClasses = `
+    fixed md:relative z-50 h-full md:h-[calc(100vh-2rem)] w-64 
+    bg-white dark:bg-gray-800 
+    md:m-4 shadow-xl flex flex-col transition-all duration-300 ease-in-out
+    ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+  `;
+
+  return (
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
+          onClick={onClose}
+        />
+      )}
+
+      <div className={sidebarClasses}>
+        <div className="p-6 flex justify-between items-center">
+          <div className="flex justify-center w-full md:w-auto">
+            <img src={logo} alt="AiR Logo" className="h-8 block dark:hidden" />
+            <img src={logo} alt="AiR Logo" className="h-8 hidden dark:block filter invert" />
           </div>
           <button
-            onClick={logout}
-            tabIndex={-1}
-            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-            title="Sign out"
+            onClick={onClose}
+            className="md:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
           >
-            <LogOut className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
+
+        <nav
+          ref={navContainerRef}
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsNavFocused(true)}
+          onBlur={() => setIsNavFocused(false)}
+          className="flex-1 overflow-y-auto px-4 py-2 space-y-1 relative focus:outline-none custom-scrollbar"
+        >
+          {/* Animated background indicator */}
+          <div
+            className="absolute left-4 right-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-all duration-300 ease-in-out pointer-events-none"
+            style={{
+              top: `${indicatorStyle.top}px`,
+              height: `${indicatorStyle.height}px`,
+              opacity: indicatorStyle.opacity
+            }}
+          />
+
+          {navItems.map((item, index) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={handleLinkClick}
+              ref={(el) => (navRefs.current[item.path] = el)}
+              tabIndex={-1}
+              className={({ isActive }) =>
+                `relative flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors z-10 ${isActive
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                } ${focusedIndex === index && !isActive && isNavFocused
+                  ? 'ring-2 ring-blue-300 dark:ring-blue-700'
+                  : ''
+                }`
+              }
+            >
+              <item.icon className="w-5 h-5 mr-3" />
+              {item.name}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="px-4 pb-3" tabIndex={-1}>
+          <div className="flex justify-center">
+            <ThemeToggle />
+          </div>
+        </div>
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
+                {user?.name?.charAt(0) || 'U'}
+              </div>
+              <div className="ml-3 overflow-hidden">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate w-24">{user?.name || 'User'}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate w-24">{user?.email}</p>
+              </div>
+            </div>
+            <button
+              onClick={logout}
+              tabIndex={-1}
+              className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

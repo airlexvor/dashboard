@@ -118,13 +118,13 @@ const Catalog = () => {
             <Card className="overflow-hidden">
                 {/* Tabs & Actions */}
                 <div className="border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between p-4">
-                        <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between p-4 gap-4">
+                        <div className="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg overflow-x-auto">
                             {['All Products', 'Synced', 'Drafts', 'Archived'].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
-                                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === tab
+                                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap ${activeTab === tab
                                         ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
                                         : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                                         }`}
@@ -133,26 +133,28 @@ const Catalog = () => {
                                 </button>
                             ))}
                         </div>
-                        <div className="flex space-x-3">
+                        <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                             <div className="relative">
                                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
                                     placeholder="Search products..."
-                                    className="pl-9 pr-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                                    className="w-full sm:w-auto pl-9 pr-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
                                 />
                             </div>
-                            <button className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <Filter className="w-4 h-4 mr-2" />
-                                Filter
-                            </button>
-                            <button
-                                onClick={handleUpload}
-                                className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors"
-                            >
-                                <Plus className="w-4 h-4 mr-2" />
-                                Upload / Sync Products
-                            </button>
+                            <div className="flex space-x-3">
+                                <button className="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <Filter className="w-4 h-4 mr-2" />
+                                    Filter
+                                </button>
+                                <button
+                                    onClick={handleUpload}
+                                    className="flex-1 sm:flex-none flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors"
+                                >
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    Upload
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -75,28 +75,30 @@ const AITraining = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-all">
                 <button
                     onClick={() => toggleSection(sectionKey)}
-                    className="w-full p-5 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    className="w-full p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors gap-4"
                 >
-                    <div className="flex items-center gap-4 flex-1 text-left">
-                        <div className="text-2xl">{icon}</div>
-                        <div className="flex-1">
-                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{title}</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{description}</p>
+                    <div className="flex items-start gap-4 flex-1 text-left w-full">
+                        <div className="text-2xl flex-shrink-0">{icon}</div>
+                        <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white break-words">{title}</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 break-words">{description}</p>
                         </div>
+                    </div>
+                    <div className="flex items-center justify-between w-full sm:w-auto gap-4 pl-11 sm:pl-0">
                         {isCompleted && (
-                            <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full">
+                            <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1 rounded-full whitespace-nowrap">
                                 <span className="text-green-600 dark:text-green-400 text-sm font-medium">✓ Completed</span>
                             </div>
                         )}
+                        <svg
+                            className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
                     </div>
-                    <svg
-                        className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
                 </button>
 
                 {isExpanded && (
