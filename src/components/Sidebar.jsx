@@ -83,6 +83,17 @@ const Sidebar = () => {
 
   const handleKeyDown = (e) => {
     switch (e.key) {
+      case 'Tab':
+        // Prevent default Tab behavior and treat it like arrow keys
+        e.preventDefault();
+        if (e.shiftKey) {
+          // Shift+Tab goes up
+          setFocusedIndex(prev => (prev - 1 + navItems.length) % navItems.length);
+        } else {
+          // Tab goes down
+          setFocusedIndex(prev => (prev + 1) % navItems.length);
+        }
+        break;
       case 'ArrowDown':
         e.preventDefault();
         setFocusedIndex(prev => (prev + 1) % navItems.length);
@@ -142,6 +153,7 @@ const Sidebar = () => {
             key={item.path}
             to={item.path}
             ref={(el) => (navRefs.current[item.path] = el)}
+            tabIndex={-1}
             className={({ isActive }) =>
               `relative flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors z-10 ${isActive
                 ? 'text-blue-600 dark:text-blue-400'
