@@ -94,7 +94,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+    <div className="flex flex-col md:flex-row h-screen bg-[#00ADFF] dark:bg-gray-900 transition-colors duration-200">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
