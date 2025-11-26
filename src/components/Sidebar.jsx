@@ -140,7 +140,7 @@ const Sidebar = ({ onTabNavigate, isOpen, onClose }) => {
 
   const sidebarClasses = `
     fixed md:relative z-50 h-full md:h-[calc(100vh-2rem)] w-64 
-    bg-white dark:bg-gray-800 
+    bg-white dark:bg-gray-800 md:rounded-2xl
     md:m-4 shadow-xl flex flex-col transition-all duration-300 ease-in-out
     ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
   `;
@@ -156,8 +156,8 @@ const Sidebar = ({ onTabNavigate, isOpen, onClose }) => {
       )}
 
       <div className={sidebarClasses}>
-        <div className="p-6 flex justify-between items-center">
-          <div className="flex justify-center w-full md:w-auto">
+        <div className="p-6 flex justify-between md:justify-center items-center">
+          <div className="flex justify-center">
             <img src={logo} alt="AiR Logo" className="h-8 block dark:hidden" />
             <img src={logo} alt="AiR Logo" className="h-8 hidden dark:block filter invert" />
           </div>
