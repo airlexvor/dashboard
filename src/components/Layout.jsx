@@ -120,7 +120,7 @@ const Layout = () => {
         tabIndex={0}
         onClick={handleMainClick}
         onKeyDown={handleMainKeyDown}
-        className="flex-1 overflow-y-auto relative md:mt-4 md:mr-4 md:mb-4 rounded-none md:rounded-2xl bg-white dark:bg-gray-800 shadow-none md:shadow-xl focus:outline-none"
+        className="flex-1 overflow-y-auto relative md:mt-4 md:mr-4 md:mb-4 rounded-none md:rounded-3xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-none md:shadow-2xl focus:outline-none border border-white/30 dark:border-white/10"
       >
         <div className="py-6 px-4 md:px-8" style={{ height: '100%' }}>
           <Outlet />
