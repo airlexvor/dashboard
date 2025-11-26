@@ -94,7 +94,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-[#00ADFF] dark:bg-gray-900 transition-colors duration-200 bg-grid">
+    <div className="flex flex-col md:flex-row h-screen bg-[#00ADFF] dark:bg-gray-900 transition-colors duration-200">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center">
@@ -120,7 +120,7 @@ const Layout = () => {
         tabIndex={0}
         onClick={handleMainClick}
         onKeyDown={handleMainKeyDown}
-        className="flex-1 overflow-y-auto relative md:mt-4 md:mr-4 md:mb-4 rounded-none md:rounded-3xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-none md:shadow-2xl focus:outline-none border border-white/30 dark:border-white/10"
+        className="flex-1 overflow-y-auto relative md:mt-4 md:mr-4 md:mb-4 rounded-none md:rounded-2xl bg-white dark:bg-gray-800 shadow-none md:shadow-xl focus:outline-none bg-dotted-grid"
       >
         <div className="py-6 px-4 md:px-8" style={{ height: '100%' }}>
           <Outlet />
