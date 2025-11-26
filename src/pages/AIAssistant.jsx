@@ -1,8 +1,18 @@
 // AI Assistant Page
-import React, { useState, useRef, useEffect } from 'react';
-import { Mic } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Mic, MicOff } from 'lucide-react';
 
 const AIAssistant = () => {
+    const [isListening, setIsListening] = useState(false);
+    const [ripples, setRipples] = useState([]);
+    const [volume, setVolume] = useState(0);
+    
+    // Audio refs
+    const audioContextRef = useRef(null);
+    const analyserRef = useRef(null);
+    const mediaStreamRef = useRef(null);
+    const animationFrameRef = useRef(null);
+    
     const [messages, setMessages] = useState([
         {
             id: 1,
@@ -81,6 +91,82 @@ const AIAssistant = () => {
         'Manage catalog',
         'Market insights'
     ];
+
+    // Audio visualization
+    const startListening = useCallback(async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStreamRef.current = stream;
+            
+            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+            analyserRef.current = audioContextRef.current.createAnalyser();
+            analyserRef.current.fftSize = 256;
+            analyserRef.current.smoothingTimeConstant = 0.3; // Lower = more responsive
+            
+            const source = audioContextRef.current.createMediaStreamSource(stream);
+            source.connect(analyserRef.current);
+            
+            setIsListening(true);
+            
+            const updateLevels = () => {
+                if (!analyserRef.current) return;
+                
+                const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+                analyserRef.current.getByteFrequencyData(dataArray);
+                
+                // Calculate overall volume with amplification for better response
+                const rawVolume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length / 255;
+                // Amplify and clamp the volume for more dramatic effect
+                const amplifiedVolume = Math.min(rawVolume * 2.5, 1);
+                setVolume(amplifiedVolume);
+                
+                animationFrameRef.current = requestAnimationFrame(updateLevels);
+            };
+            
+            updateLevels();
+        } catch (err) {
+            console.error('Error accessing microphone:', err);
+        }
+    }, []);
+
+    const stopListening = useCallback(() => {
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+        }
+        
+        if (mediaStreamRef.current) {
+            mediaStreamRef.current.getTracks().forEach(track => track.stop());
+        }
+        
+        if (audioContextRef.current) {
+            audioContextRef.current.close();
+        }
+        
+        setIsListening(false);
+        setVolume(0);
+    }, []);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            stopListening();
+        };
+    }, [stopListening]);
+
+    const handleMicClick = () => {
+        // Add ripple effect
+        const newRipple = { id: Date.now() };
+        setRipples(prev => [...prev, newRipple]);
+        setTimeout(() => {
+            setRipples(prev => prev.filter(r => r.id !== newRipple.id));
+        }, 1000);
+        
+        if (isListening) {
+            stopListening();
+        } else {
+            startListening();
+        }
+    };
 
     return (
         <div className="flex flex-col md:flex-row h-full">
@@ -177,15 +263,89 @@ const AIAssistant = () => {
                 </div>
             </div>
             <div className="flex-1 flex flex-col items-center justify-center p-4 w-full md:w-1/2">
-                <div className="relative w-32 h-32 flex items-center justify-center">
-                    <button className="flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg hover:scale-105 transition-transform z-10">
-                        <Mic className="h-10 w-10 text-white" />
+                <div className="relative w-64 h-64 flex items-center justify-center">
+                    {/* Ripple effects on click */}
+                    {ripples.map((ripple) => (
+                        <div
+                            key={ripple.id}
+                            className="absolute rounded-full bg-gradient-to-r from-purple-400 to-pink-400 animate-ripple"
+                            style={{
+                                width: '80px',
+                                height: '80px',
+                                left: '50%',
+                                top: '50%',
+                                transform: 'translate(-50%, -50%)',
+                            }}
+                        />
+                    ))}
+                    
+                    {/* Voice-reactive pulse rings */}
+                    <div 
+                        className="absolute rounded-full bg-gradient-to-r from-purple-300/30 to-pink-300/30 transition-all duration-75 ease-out"
+                        style={{
+                            width: isListening ? `${100 + volume * 160}px` : '140px',
+                            height: isListening ? `${100 + volume * 160}px` : '140px',
+                            opacity: isListening ? 0.2 + volume * 0.7 : 0.3,
+                        }}
+                    />
+                    <div 
+                        className="absolute rounded-full bg-gradient-to-r from-purple-400/40 to-pink-400/40 transition-all duration-75 ease-out"
+                        style={{
+                            width: isListening ? `${95 + volume * 120}px` : '120px',
+                            height: isListening ? `${95 + volume * 120}px` : '120px',
+                            opacity: isListening ? 0.3 + volume * 0.6 : 0.4,
+                        }}
+                    />
+                    <div 
+                        className="absolute rounded-full bg-gradient-to-r from-purple-500/50 to-pink-500/50 transition-all duration-75 ease-out"
+                        style={{
+                            width: isListening ? `${90 + volume * 80}px` : '100px',
+                            height: isListening ? `${90 + volume * 80}px` : '100px',
+                            opacity: isListening ? 0.4 + volume * 0.5 : 0.5,
+                        }}
+                    />
+                    
+                    {/* Ambient pulse animation when not listening */}
+                    {!isListening && (
+                        <>
+                            <div className="absolute w-36 h-36 rounded-full bg-purple-300/20 animate-pulse" />
+                            <div className="absolute w-32 h-32 rounded-full bg-purple-400/30 animate-pulse" style={{ animationDelay: '0.2s' }} />
+                            <div className="absolute w-28 h-28 rounded-full bg-purple-500/40 animate-pulse" style={{ animationDelay: '0.4s' }} />
+                        </>
+                    )}
+                    
+                    {/* Main button */}
+                    <button 
+                        onClick={handleMicClick}
+                        className={`relative flex items-center justify-center w-20 h-20 rounded-full shadow-2xl z-10 transition-all duration-150 transform hover:scale-110 active:scale-95 ${
+                            isListening 
+                                ? 'bg-gradient-to-r from-pink-500 to-red-500' 
+                                : 'bg-gradient-to-r from-purple-500 to-pink-500'
+                        }`}
+                        style={{
+                            boxShadow: isListening 
+                                ? `0 0 ${30 + volume * 80}px rgba(236, 72, 153, ${0.5 + volume * 0.5})` 
+                                : '0 25px 50px -12px rgba(168, 85, 247, 0.5)',
+                            transform: isListening ? `scale(${1 + volume * 0.15})` : 'scale(1)'
+                        }}
+                    >
+                        {isListening ? (
+                            <MicOff className="h-10 w-10 text-white" />
+                        ) : (
+                            <Mic className="h-10 w-10 text-white" />
+                        )}
+                        
+                        {/* Inner glow effect */}
+                        <div 
+                            className="absolute inset-0 rounded-full bg-white/40 transition-opacity duration-75"
+                            style={{ opacity: isListening ? volume : 0 }}
+                        />
                     </button>
-                    <div className="absolute inset-0 rounded-full bg-purple-300 opacity-50 animate-pulse"></div>
-                    <div className="absolute inset-2 rounded-full bg-purple-400 opacity-70 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="absolute inset-4 rounded-full bg-purple-500 opacity-90 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
                 </div>
-                <div className="mt-4 text-gray-600 dark:text-gray-300">Click to speak</div>
+                
+                <div className={`mt-6 text-lg font-medium transition-all duration-300 ${isListening ? 'text-pink-500 dark:text-pink-400' : 'text-gray-600 dark:text-gray-300'}`}>
+                    {isListening ? 'Listening... Speak now!' : 'Click to speak'}
+                </div>
             </div>
         </div>
     );
